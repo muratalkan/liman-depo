@@ -70,7 +70,7 @@ function writeRepos($repos){
 		->write($repos, true);
 }
 
-function getAptMirrorStatus($mirrorName){
+function checkMirrorStatus($mirrorName){
 	return (bool) Command::runSudo(
 		"ps aux | grep apt-mirror | grep '{:mirrorName}$' | grep -v grep > /dev/null && echo 1 || echo 0",
 		[

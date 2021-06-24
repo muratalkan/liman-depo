@@ -58,8 +58,8 @@ class MirrorController
 					'oldDescription' => $description,
 					'cron' => $cron,
 					'lastRun' => $lastRun,
-					'status' => getAptMirrorStatus($value),
-					'operation' => getAptMirrorStatus($value),
+					'status' => checkMirrorStatus($value),
+					'operation' => checkMirrorStatus($value),
 					'set_nthreads' => $set_nthreads,
 					'old_set_nthreads' => $set_nthreads,
 					'set_tilde' => $set_tilde,
@@ -237,8 +237,7 @@ class MirrorController
 		$mirrorName = request('name');
 		$path = request('storagePath');
 
-		$status = getAptMirrorStatus($mirrorName);
-		if($status){
+		if(checkMirrorStatus($mirrorName)){
 			return respond("Devam eden bir aynalama bulunmakta. Aynalamayı durdurduktan sonra işlem yapabilirsiniz.", 201);
 		}
 
@@ -304,8 +303,8 @@ class MirrorController
 		$set_tilde = request('set_tilde');
 		$old_set_tilde = request('old_set_tilde');
 		
-		$status = getAptMirrorStatus($oldMirrorName);
-		if($status){
+
+		if(checkMirrorStatus($oldMirrorName)){
 			return respond("Devam eden bir aynalama bulunmakta. Aynalamayı durdurduktan sonra işlem yapabilirsiniz.", 201);
 		}
 
@@ -358,8 +357,7 @@ class MirrorController
 		$newPath = rtrim(trim(request('newPath')), '/');
 
 		if($newPath != $oldPath){
-			$status = getAptMirrorStatus($mirrorName);
-			if($status){
+			if(checkMirrorStatus($mirrorName)){
 				return respond("Devam eden bir aynalama bulunmakta. Aynalamayı durdurduktan sonra işlem yapabilirsiniz.", 201);
 			}
 
@@ -431,8 +429,8 @@ class MirrorController
 		$address = trim(request('address'));
 		$link = removeSpecialChar(trim(request('link')));
 
-		$status = getAptMirrorStatus($mirrorName);
-		if($status && $activeState == 'true'){
+
+		if(checkMirrorStatus($mirrorName) && $activeState == 'true'){
 			return respond("Devam eden bir aynalama bulunmakta. Aynalamayı durdurduktan sonra işlem yapabilirsiniz.", 201);
 		}
 
@@ -550,8 +548,8 @@ class MirrorController
 		$link = request('link');
 		$activeState = request('activeState');
 
-		$status = getAptMirrorStatus($mirrorName);
-		if($status && $activeState == 'true'){
+
+		if(checkMirrorStatus($mirrorName) && $activeState == 'true'){
 			return respond("Devam eden bir aynalama bulunmakta. Aynalamayı durdurduktan sonra işlem yapabilirsiniz.", 201);
 		}
 
@@ -655,8 +653,8 @@ class MirrorController
 		$link = removeSpecialChar(trim(request('link')));
 		$oldLink = request('oldLink');
 
-		$status = getAptMirrorStatus($mirrorName);
-		if($status){
+
+		if(checkMirrorStatus($mirrorName)){
 			return respond("Devam eden bir aynalama bulunmakta. Aynalamayı durdurduktan sonra işlem yapabilirsiniz.", 201);
 		}
 
@@ -804,9 +802,8 @@ class MirrorController
 	function start(){
 		global $limanData;
 		$mirrorName = request('mirrorName');
-		$status = getAptMirrorStatus($mirrorName);
 
-		if (!$status) {
+		if (!checkMirrorStatus($mirrorName)) {
 			Command::runSudo(
 				'bash -c "sg nogroup -c \"umask 002;apt-mirror @{:path}; echo $(date \"+%d-%m-%Y %H:%M:%S\") \| local user = $(whoami), liman user = {:limanUser} - Finish - apt-mirror @{:mirrorName} repository >> @{:summaryLogFile}\" > @{:detailsLogFile} & disown"',
 				[
@@ -887,8 +884,12 @@ class MirrorController
 		validate([
 			'mirrorName' => 'required|string'
 		]);
-
 		$mirrorName = request('mirrorName');
+
+		if(checkMirrorStatus($mirrorName)){
+			return respond("Devam eden bir aynalama bulunmakta. Aynalamayı durdurduktan sonra işlem yapabilirsiniz.", 201);
+		}
+
 		$scriptPath = Mirror::getSizeScriptPath() . Mirror::getSizeScriptName();
 
 		File::instance()
