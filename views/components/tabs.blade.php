@@ -33,6 +33,11 @@
     @endforeach
 </div>
 
+<div id="loading" style="min-height: 50px;">
+    <div class="overlay">
+        <div class="spinner-border" role="status"></div>
+    </div>
+</div>
 
 @php
     $tabsCollection = collect($tabs);
@@ -41,11 +46,9 @@
 @endphp
 
 <script>
-
     if(location.hash === ""){
         loadPageContent('{{ $firstOptions['view'] }}', '{{ $firstTab }}', '{{ $firstOptions['onclick'] }}')
     }      
-
     function loadPageContent(view, tab, onclick, notReload=false){
         if(notReload && $('.tab-content').find('#'+tab).html().length){
             eval(onclick);
@@ -53,15 +56,18 @@
         }
         showSwal('{{__("Yükleniyor...")}}','info');
         $('.tab-content').find('#'+tab).html("");
+        $('#loading').show();
         let data = new FormData();
         data.append("view", view);
         request("{{API("load")}}", data, function(response){
             $('.tab-content').find('#'+tab).html(response);
+            $('#loading').hide();
             Swal.close();
             eval(onclick);
         }, function(response){
             let error = JSON.parse(response)["message"];
             showSwal(error, 'error', 2000);
+            $('#loading').hide();
         });
     }
 </script>
