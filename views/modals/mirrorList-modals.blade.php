@@ -37,10 +37,10 @@
     "title" => "Sembolik Linkler ve Dosya Yolları"
 ])
     <button type="button" class="btn btn btn-primary mb-2" onclick="getSizeMirror()">
-        <i class="fas fa-calculator mr-1"></i> Boyut Hesapla
+        <i class="fas fa-calculator mr-1"></i> {{ __('Boyut Hesapla') }}
     </button>
     <button type="button" class="btn btn btn-primary mb-2" onclick="getSourcesList()">
-        <i class="fas fa-list-ul mr-1"></i> Sources List
+        <i class="fas fa-list-ul mr-1"></i> {{ __('Sources List') }}
     </button>
 
     <div id="linkPathDiv">
@@ -95,7 +95,7 @@
         "inputs" => [
             "Durum:activeState" => [
                 "Aktif" => "true",
-                "Pasif" => "false"
+                "İnaktif" => "false"
             ],
             "Depo Adresi" => "address:text:deb http://depo.pardus.org.tr/pardus ondokuz main",
             "Sembolik Link Adı" => "link:text:pardus",
@@ -117,7 +117,7 @@
         "inputs" => [
             "Durum:activeState" => [
                 "Aktif" => "true",
-                "Pasif" => "false"
+                "İnaktif" => "false"
             ],
             "Depo Adresi" => "address:text:Bu kısımda sadece versiyon, kod adı ve paketler değiştirilebilir.",
             "Sembolik Link Adı" => "link:text:Sembolik depo link adı",
@@ -137,7 +137,7 @@
     "footer" => [
         "class" => "btn-success",
         "onclick" => "addCron()",
-        "text" => "Tanımla"
+        "text" => __("Tanımla")
     ],
 ])
 
@@ -153,7 +153,7 @@
         <div class="col-2">
             @php $minutesArray = \App\Controllers\CronController::getMinutes(); @endphp
             <div class="form-group">
-                <label>Dakikalar</label>
+                <label>{{ __('Dakikalar') }}</label>
                 <select class="form-control select2" name="cronMinutes">
                     @foreach($minutesArray as $key => $value)
                         <option value="{{$key}}">{{$value}}</option>
@@ -164,7 +164,7 @@
         <div class="col-2">
             @php $hoursArray = \App\Controllers\CronController::getHours(); @endphp
             <div class="form-group">
-                <label>Saatler</label>
+                <label>{{ __('Saatler') }}</label>
                 <select class="form-control select2" name="cronHours">
                     @foreach($hoursArray as $key => $value)
                         <option value="{{$key}}">{{$value}}</option>
@@ -176,7 +176,7 @@
         <div class="col-2">
             @php $daysArray = \App\Controllers\CronController::getDays(); @endphp
             <div class="form-group">
-                <label>Günler</label>
+                <label>{{ __('Günler') }}</label>
                 <select class="form-control select2" name="cronDays">
                     @foreach($daysArray as $key => $value)
                         <option value="{{$key}}">{{$value}}</option>
@@ -187,7 +187,7 @@
         <div class="col-3">
             @php $monthsArray = \App\Controllers\CronController::getMonths(); @endphp
             <div class="form-group">
-                <label>Ay</label>
+                <label>{{ __('Ay') }}</label>
                 <select class="form-control select2" name="cronMonths">
                     @foreach($monthsArray as $key => $value)
                         <option value="{{$key}}">{{$value}}</option>
@@ -198,7 +198,7 @@
         <div class="col-3">
             @php $weekDaysArray = \App\Controllers\CronController::getWeekDays(); @endphp
             <div class="form-group">
-                <label>Hafta Günleri</label>
+                <label>{{ __('Hafta Günleri') }}</label>
                 <select class="form-control select2" name="cronWeekDays">
                     @foreach($weekDaysArray as $key => $value)
                         <option value="{{$key}}">{{$value}}</option>
@@ -210,8 +210,8 @@
 
     <div class="form-group text_input" style="display:none;">
         <label>{{ __('Cron Girdisi') }}</label>
-        <input type="text" name="custom" class="form-control" placeholder="* * * * * = Dakika Saat Gün Ay Yıl">
-        <small>* * * * * = Dakika Saat Gün Ay Yıl</small>
+        <input type="text" name="custom" class="form-control" placeholder="* * * * * = {{ __('Dakika Saat Gün Ay Yıl') }}">
+        <small>* * * * * = {{ __('Dakika Saat Gün Ay Yıl') }}</small>
     </div>
 @endcomponent
 
@@ -220,7 +220,7 @@
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Cron Düzenle</h5>
+        <h5 class="modal-title" id="exampleModalLabel">{{ __('Cron Düzenle') }}</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -228,12 +228,13 @@
       <div class="modal-body">
         <div class="form-group">
             <label>Cron</label>
-            <input type="text" name="time" placeholder="* * * * * = Dakika Saat Gün Ay Yıl" class="form-control " required="">                                                    <small class="form-text text-muted">* * * * * = Dakika Saat Gün Ay Yıl</small>
+            <input type="text" name="time" placeholder="* * * * * = {{ __('Dakika Saat Gün Ay Yıl') }}" class="form-control " required="">                                                    
+            <small class="form-text text-muted">* * * * * = {{ __('Dakika Saat Gün Ay Yıl') }}</small>
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-danger" onclick="removeCron()">Cron Kaldır</button>
-        <button class="btn btn-success" onclick="editCron()">Güncelle</button>
+        <button class="btn btn-danger" onclick="removeCron()">{{ __('Cron Kaldır') }}</button>
+        <button class="btn btn-success" onclick="editCron()">{{ __('Güncelle') }}</button>
       </div>
     </div>
   </div>

@@ -13,7 +13,7 @@ class CronController
 	public static function getMinutes()
 	{
 		$minutesArray = [];
-		$minutesArray['*'] = 'Hepsi';
+		$minutesArray['*'] = __('Hepsi');
 		for ($i = 0; $i < 60; $i++) {
 			$i = str_pad($i, 2, '0', STR_PAD_LEFT);
 			$minutesArray[$i] = $i;
@@ -23,7 +23,7 @@ class CronController
 	public static function getHours()
 	{
 		$hoursArray = [];
-		$hoursArray['*'] = 'Hepsi';
+		$hoursArray['*'] = __('Hepsi');
 		for ($i = 0; $i < 24; $i++) {
 			$i = str_pad($i, 2, '0', STR_PAD_LEFT);
 			$hoursArray[$i] = $i;
@@ -34,7 +34,7 @@ class CronController
 	public static function getDays()
 	{
 		$daysArray = [];
-		$daysArray['*'] = 'Hepsi';
+		$daysArray['*'] = __('Hepsi');
 		for ($i = 1; $i < 32; $i++) {
 			$i = str_pad($i, 2, '0', STR_PAD_LEFT);
 			$daysArray[$i] = $i;
@@ -45,20 +45,20 @@ class CronController
 	public static function getMonths()
 	{
 		$monthsArray = [];
-		$monthsArray['*'] = 'Hepsi';
+		$monthsArray['*'] = __('Hepsi');
 		$months = [
-			'Ocak',
-			'Şubat',
-			'Mart',
-			'Nisan',
-			'Mayıs',
-			'Haziran',
-			'Temmuz',
-			'Ağustos',
-			'Eylül',
-			'Ekim',
-			'Kasım',
-			'Aralık'
+			__('Ocak'),
+			__('Şubat'),
+			__('Mart'),
+			__('Nisan'),
+			__('Mayıs'),
+			__('Haziran'),
+			__('Temmuz'),
+			__('Ağustos'),
+			__('Eylül'),
+			__('Ekim'),
+			__('Kasım'),
+			__('Aralık')
 		];
 		for ($i = 1; $i <= sizeof($months); $i++) {
 			$monthsArray[$i] = $months[$i - 1];
@@ -69,14 +69,14 @@ class CronController
 	public static function getWeekDays()
 	{
 		return [
-			'*' => 'Hepsi',
-			1 => 'Pazartesi',
-			2 => 'Salı',
-			3 => 'Çarşamba',
-			4 => 'Perşembe',
-			5 => 'Cuma',
-			6 => 'Cumartesi',
-			0 => 'Pazar'
+			'*' => __('Hepsi'),
+			1 => __('Pazartesi'),
+			2 => __('Salı'),
+			3 => __('Çarşamba'),
+			4 => __('Perşembe'),
+			5 => __('Cuma'),
+			6 => __('Cumartesi'),
+			0 => __('Pazar')
 		];
 	}
 
@@ -88,7 +88,7 @@ class CronController
 
 		removeCron(request('mirrorName'));
 
-		return respond('Kaldırıldı', 200);
+		return respond(__('Kaldırıldı'), 200);
 	}
 
 	function addCron()
@@ -126,7 +126,7 @@ class CronController
 				'cronMirrorFile' => Mirror::getCronFile()
 			]
 		);
-		return respond('Eklendi', 200);
+		return respond(__('Eklendi'), 200);
 	}
 
 	function editCron()
@@ -167,6 +167,6 @@ class CronController
 				'cronMirrorFile' => Mirror::getCronFile()
 			]
 		);
-		return respond('Güncellendi', 200);
+		return respond(__('Güncellendi'), 200);
 	}
 }

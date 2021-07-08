@@ -217,7 +217,7 @@
                         formData.append("newPath", newPath);
                     request("{{API('move_mirror')}}", formData, function(response) {
                         const message = JSON.parse(response).message;
-                        Swal.fire({title:"{{ __('Başarılı!') }}", text: message, type: "success", showConfirmButton: false});
+                        Swal.fire({title:"{{ __('Başarılı') }}", text: message, type: "success", showConfirmButton: false});
                         setTimeout(function() { getMirrors(); }, 1000);
                     },function(response) {
                         const error = JSON.parse(response).message;
@@ -526,7 +526,7 @@
         formData.append('mirrorName', MIRRORNAME);
         request(API("edit_cron"), formData, function(res) {
             getMirrors();
-            showSwal('{{__("Güncellendi..")}}','success',2000);
+            showSwal('{{__("Güncellendi")}}','success',2000);
             $('#editCronComponent').modal("hide")
         }, function(response){
             let error = JSON.parse(response);
@@ -540,7 +540,7 @@
         formData.append('mirrorName', MIRRORNAME);
         request(API("remove_cron"), formData, function(res) {
             getMirrors();
-            showSwal('{{__("Kaldırıldı!")}}', 'success', 2000);
+            showSwal('{{__("Kaldırıldı")}}', 'success', 2000);
             $('#editCronComponent').modal("hide")
         }, function(response){
             let error = JSON.parse(response);
@@ -617,7 +617,7 @@
             if($(this).text() === 'true'){ 
                 $(this).parent().find("td[id='activeStateTxt']").html(`<small class="badge badge-primary">{{__('Aktif')}}</small>`);
             }else{//inactive address
-                $(this).parent().find("td[id='activeStateTxt']").html(`<small class="badge badge-secondary">{{__('Pasif')}}</small>`);
+                $(this).parent().find("td[id='activeStateTxt']").html(`<small class="badge badge-secondary">{{__('İnaktif')}}</small>`);
             }
         });
     }

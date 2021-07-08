@@ -166,7 +166,7 @@ class InternalRepoController
 
 		$output = putFile(getPath($path), $remotePath);
 		if ($output !== 'ok') {
-			return respond('Başarısız', 201);
+			return respond(__('Hata!'), 201);
 		}
 		$pathFile = str_replace(' ', '\ ', getPath(quotemeta($path)));
 		shell_exec("rm -rf $pathFile");
@@ -182,17 +182,17 @@ class InternalRepoController
 		);
 
 		if (strpos($output, 'No section') !== false) {
-			return respond('Pakette section bulunamadı', 201);
+			return respond(__('Pakette section bulunamadı!'), 201);
 		}
 		if (strpos($output, 'already') !== false) {
-			return respond("Bu paket zaten bulunmaktadır : $name", 201);
+			return respond(__("Bu paket zaten bulunmaktadır!"), 201);
 		}
 		Command::runSudo('rm -rf {:remotePath}', [
 			'remotePath' => $remotePath
 		]);
 
 		if ($this->checkPackagesRepo($repoPath, $codeName, $remotePath)) {
-			return respond('Paket Eklendi', 200);
+			return respond(__('Paket Eklendi'), 200);
 		} else {
 			return respond(explode("\n", $output)[0], 201);
 		}
@@ -249,9 +249,9 @@ class InternalRepoController
 		);
 
 		if ($checkPackage) {
-			return respond('Paket Silinemedi', 201);
+			return respond(__('Paket silinemedi!'), 201);
 		} else {
-			return respond('Paket silindi', 200);
+			return respond(__('Paket silindi'), 200);
 		}
 	}
 
@@ -292,7 +292,7 @@ class InternalRepoController
 				'listJsonFile' => $this->listJsonFile
 			]
 		);
-		return respond('Silindi', 200);
+		return respond(__('Silindi'), 200);
 	}
 
 	function add()
@@ -320,14 +320,14 @@ class InternalRepoController
 			->createDirectory();
 
 		if (is_array($listArray['internal'][$repoName])) {
-			return respond('Böyle bir depo bulunmaktadır.', 201);
+			return respond(__('Böyle bir depo bulunmaktadır!'), 201);
 		}
 
 		$checkLink = Command::runSudo(
 			"[ -L /var/www/html/$repoName ] && echo 1 || echo 0"
 		);
 		if ($checkLink == '1') {
-			return respond("Bu link adı bulunmaktadır. -$repoName-", 201);
+			return respond(__("Bu link adı bulunmaktadır!"), 201);
 		}
 		$signWith = $this->createGpgKey();
 		$link = "/var/www/html/$repoName";
@@ -381,7 +381,7 @@ class InternalRepoController
 				'listJsonFile' => $this->listJsonFile
 			]
 		);
-		return respond('Eklendi', 200);
+		return respond(__('Yerel Depo Eklendi'), 200);
 	}
 
 	function addDist(

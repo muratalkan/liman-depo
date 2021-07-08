@@ -105,12 +105,12 @@
             const output = JSON.parse(response).message;
             Swal.fire({
                 icon: 'success',
-                title: 'GPG Anahtarı',
+                title: "{{__('GPG Anahtarı')}}",
                 showCancelButton: true, showConfirmButton: false,
                 cancelButtonText: "{{ __('Kapat') }}",
-                html: `Aşağıdaki komutu kullanarak GPG anahtarını istemcinize ekleyebilirsiniz. 
+                html: `{{__('Aşağıdaki komutu kullanarak GPG anahtarını istemcinize ekleyebilirsiniz.')}} 
                 <blockquote class='quote-secondary'>${output}</blockquote>
-                <small>*{{__('Depoyu istemciye eklemek için GPG anahtarı gereklidir.')}}</small>
+                <small>*{{__('Depoyu istemciye eklemek için GPG anahtarı gereklidir')}}</small>
                 `,
             })
         }, function(response){

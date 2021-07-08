@@ -104,7 +104,7 @@ class PackageSearchController
 			$i=0;$j=0;
 			$size=count($packages[0]);
 			if($size == 0){
-				return respond("Paket Bulunamadı!", 201);
+				return respond(__("Paket Bulunamadı!"), 201);
 			}
 			foreach ($packages[0] as $key => $package) {
 				if($i >= (intval($currentPage)-1) * $perPage && $i < (intval($currentPage)-1) * $perPage + $perPage){
