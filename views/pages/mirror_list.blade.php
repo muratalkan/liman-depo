@@ -1,12 +1,8 @@
 @include('modals.mirrorList-modals')
-@include('components.functions')
 
-@include('modal-button',[
-    "class"     =>  "btn btn-primary mb-2",
-    "target_id" =>  "addMirror",
-    "text"      =>  "Aynalama Ekle",
-    "icon" => "fas fa-plus mr-1"
-])
+<button type="button" class="btn btn btn-outline-primary mb-3 mt-2" data-toggle="modal" data-target="#addMirror">
+    <i class="fas fa-plus mr-1"></i> {{__('Aynalama Ekle')}}
+</button>
 
 <div id="mirrorTable">
     <br>
@@ -19,6 +15,10 @@
 
 
 <script>
+    var MIRRORNAME = "";
+    var STORAGEPATH = "";
+    var mirroring  = false;
+
     resetModalForm('#addMirrorAddress');
     setLinkInputOnChange();
 
@@ -35,25 +35,34 @@
     setAttr_Required('#addMirror', 'description', false);
     setAttr_Required('#editMirror', 'description', false);
 
-    var MIRRORNAME = "";
-    var STORAGEPATH = "";
 
-    function getMirrors(){
-        showSwal('{{__("Yükleniyor...")}}','info');
+    var mirrorTimeout;
+    function getMirrors(msg='', refresh=false){
+        if(refresh == false){
+            showSwal('{{__("Yükleniyor...")}}','info');
+        }
         request(API('get_mirrors'), new FormData(), function (response) {
             $('#mirrorTable').html(response).find('table').DataTable(dataTablePresets('normal'));
-            $('#addMirror').modal('hide');
-            $('#editMirror').modal('hide');
+            if(refresh == false){
+                $('#addMirror').modal('hide');
+                $('#editMirror').modal('hide');
+                Swal.close();
+            }
             setMirrorStatus();
-            Swal.close();
+            mirrorTimeout && clearTimeout(mirrorTimeout);
+            mirrorTimeout = setTimeout(function () {
+                if($(`a[href=\"#mirrorList\"]`).hasClass("active")){
+                    getMirrors('', true);
+                }
+            }, 30000);
         }, function(response){
-            let error = JSON.parse(response).message;
+            const error = JSON.parse(response).message;
             showSwal(error,'error',2000);
         })
     }
 
     function startMirror(row){
-        var mirrorName = row.querySelector("#name").innerHTML;
+        let mirrorName = row.querySelector("#name").innerHTML;
         Swal.fire({
             title: `${mirrorName}`,
             text: "{{ __('Bu işlem uzun sürecektir. Aynalamayı başlatmak istediğinize emin misiniz?') }}",
@@ -69,20 +78,22 @@
                         formData.append("mirrorName",mirrorName);
                     request(API("start_mirror") ,formData,function(response){
                         const message = JSON.parse(response).message;
-                        Swal.fire({title:"{{ __('Başlatıldı!') }}", text: message, type: "success", showConfirmButton: false});
+                        mirroring  = true;
+                        Swal.fire({title:"{{ __('Başarılı') }}", text: message, type: "success", showConfirmButton: false});
                         setTimeout(function() { getMirrors(); }, 1000);
                     }, function(response){
-                        let error = JSON.parse(response).message;
+                        const error = JSON.parse(response).message;
                         Swal.fire("{{ __('Hata!') }}",error, "error");
                     }); 
                 })
               },
               allowOutsideClick: false
         });
+        
     }
 
     function stopMirror(row){
-        var mirrorName = row.querySelector("#name").innerHTML;
+        let mirrorName = row.querySelector("#name").innerHTML;
         Swal.fire({
             title: `${mirrorName}`,
             text: "{{ __('Bu işlemi durdurmak istediğinize emin misiniz?') }}",
@@ -98,10 +109,11 @@
                         formData.append("mirrorName",mirrorName);
                     request(API("stop_mirror") ,formData,function(response){
                         const message = JSON.parse(response).message;
-                        Swal.fire({title:"{{ __('Durduruldu!') }}", text: message, type: "success", showConfirmButton: false});
+                        mirroring = false;
+                        Swal.fire({title:"{{ __('Başarılı') }}", text: message, type: "success", showConfirmButton: false});
                         setTimeout(function() { getMirrors(); }, 1000);
                     }, function(response){
-                        let error = JSON.parse(response).message;
+                        const error = JSON.parse(response).message;
                         Swal.fire("{{ __('Hata!') }}",error, "error");
                     });   
                 })
@@ -111,10 +123,10 @@
     }
 
     function deleteMirror(row){
-        var mirrorName = row.querySelector("#name").innerHTML;
+        let mirrorName = row.querySelector("#name").innerHTML;
         Swal.fire({
             title: `${mirrorName}`,
-            text: "{{ __('Silmek istediğinize emin misiniz?') }}",
+            text: "{{ __('Aynalamayı silmek istediğinize emin misiniz?') }}",
             type: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085D6',
@@ -130,10 +142,10 @@
                         formData.append("storagePath",storagePath);
                     request(API("delete_mirror") ,formData,function(response){
                         const message = JSON.parse(response).message;
-                        Swal.fire({title:"{{ __('Silindi!') }}", text: message, type: "success", showConfirmButton: false});
+                        Swal.fire({title:"{{ __('Başarılı') }}", text: message, type: "success", showConfirmButton: false});
                         setTimeout(function() { getMirrors(); }, 1000);
                     }, function(response){
-                        let error = JSON.parse(response).message;
+                        const error = JSON.parse(response).message;
                         Swal.fire("{{ __('Hata!') }}",error, "error");
                     });
                 })
@@ -143,8 +155,8 @@
     }
 
     function moveMirror(row){
-        var mirrorName = row.querySelector('#name').innerHTML;
-        var oldPath = row.querySelector('#oldStoragePath').innerHTML;
+        let mirrorName = row.querySelector('#name').innerHTML;
+        let oldPath = row.querySelector('#oldStoragePath').innerHTML;
         Swal.fire({
             title: `<h5><span class='badge badge-primary badge-pill'>'${oldPath}</span>/<span class='badge badge-warning badge-pill'>${mirrorName}'</span></h5>`,
             input: 'text',
@@ -166,8 +178,8 @@
     }
 
     function moveMirror_Confirm(row, newPath){
-        var mirrorName = row.querySelector('#name').innerHTML;
-        var oldPath = row.querySelector('#oldStoragePath').innerHTML;
+        let mirrorName = row.querySelector('#name').innerHTML;
+        let oldPath = row.querySelector('#oldStoragePath').innerHTML;
         Swal.fire({
             html: `
                 <div class='row'>
@@ -187,9 +199,9 @@
                 </div>
                 <div class='row'>
                     <div class='col-md-12 center-block text-center'>
-                        <p>Aynalamanın eski ve yeni konumu yukarıda sırasıyla belirtilmiştir. Eğer aynalamayı halen taşımadıysanız aşağıdaki komutu kullanarak taşıyabilirsiniz.</p>
-                        <small style='background-color:black; color:white;' class='col-md-12 center-block text-center'>sudo mv '${oldPath}/${mirrorName}' '${newPath}'</small>
-                        <br><br><small>*Taşıma işlemi aynalama boyutuna göre zaman alabilir*</small>
+                        <p>{{__('Aynalamanın eski ve yeni konumu yukarıda sırasıyla belirtilmiştir. Eğer aynalamayı halen taşımadıysanız aşağıdaki komutu kullanarak taşıyabilirsiniz.')}}</p>
+                        <blockquote class='quote-secondary'>sudo mv '${oldPath}/${mirrorName}' '${newPath}'</blockquote>
+                        <small>*{{__('Taşıma işlemi aynalama boyutuna göre zaman alabilir')}}</small>
                     </div>
                 </div>
             `,
@@ -224,68 +236,51 @@
         let formData = new FormData();
             formData.append("storagePath", storagePath);
             formData.append("mirrorName", mirrorName);
-        request("{{API('get_disk_info')}}", formData, function(response) {
-            const data = JSON.parse(response).message;
-            color = data.MirrorStatus === '1' ? 'success' : 'danger';
-            Swal.close();
-            Swal.fire({
-                title: `<h5><span class='badge badge-${color} badge-pill'>'${storagePath}/${mirrorName}'</span></h5>`,
-                width: '550px',
-                html:
-                    `
-                    <li class='list-group-item d-flex justify-content-between align-items-center'><strong>{{__("Bağlanılan Yer")}}:</strong><span class='badge badge-pill'>${data.MountedOn}</span> </li>
-                    <li class='list-group-item d-flex justify-content-between align-items-center'><strong>{{__("Dosya Sistemi")}}:</strong><span class='badge badge-pill'>${data.Filesystem}</span> </li>
-                    <li class='list-group-item d-flex justify-content-between align-items-center'><strong>{{__("Tür")}}:</strong><span class='badge badge-pill'>${data.Type}</span> </li>
-                    <li class='list-group-item d-flex justify-content-between align-items-center'><strong>{{__("Toplam Boyut")}}:</strong><span class='badge badge-secondary badge-pill'>${data.Size}</span> </li>
-                    <li class='list-group-item d-flex justify-content-between align-items-center'><strong>{{__("Kullanılan")}}:</strong><span class='badge badge-danger badge-pill'>${data.Used} (${data.UsedPercentage})</span> </li>
-                    <li class='list-group-item d-flex justify-content-between align-items-center'><strong>{{__("İndirilen Aynalama Boyutu")}}:</strong><span class='badge badge-warning badge-pill'>${data.InstalledMirrorSize}</span> </li>
-                    <li class='list-group-item d-flex justify-content-between align-items-center'><strong>{{__("Boş")}}:</strong><span class='badge badge-primary badge-pill'>${data.Available}</span> </li>
-                    `,
-                showCancelButton: true,
-                showConfirmButton: true,
-                confirmButtonText: "{{__('Yenile')}}", cancelButtonText: "{{__('Kapat')}}"
-            }).then((result) => {
-                if (result.value) {
-                    getDiskInfo(row);
-                }
-        });
-        },function(response) {
-            const error = JSON.parse(response).message;
-            Swal.fire("{{ __('Error!') }}", error, "error");
-        });
+            getDiskAlert(`${storagePath}/${mirrorName}`, formData, 'get_disk_info')
     }
 
-    function getLinksAndPaths(row){
-        $('.overlay').show();
-        showSwal('{{__("Yükleniyor...")}}','info');
-        var mirrorName = (row == null) ? MIRRORNAME : row.querySelector("#name").innerHTML;
-        var storagePath = (row == null) ? STORAGEPATH : row.querySelector("#storagePath").innerHTML;
+    var modalTimeout;
+    function getLinksAndPaths(row, refresh=false){
+        if(refresh == false){
+            $('.overlay').show();
+            showSwal('{{__("Yükleniyor...")}}','info');
+        }
+        let mirrorName = (row == null) ? MIRRORNAME : row.querySelector("#name").innerHTML;
+        let storagePath = (row == null) ? STORAGEPATH : row.querySelector("#storagePath").innerHTML;
         let formData = new FormData();
             formData.append("mirrorName",mirrorName);
             formData.append("storagePath", storagePath);
         request(API('get_links_and_paths'), formData, function (response) {
-            $('.overlay').hide();
-            MIRRORNAME = mirrorName;
-            STORAGEPATH = storagePath;
             $('#linkPathTable').html(response).find('table').DataTable(dataTablePresets('normal'));
-            $('#createLinkModal').modal('hide');
-            $('#linksAndPathsComponent').modal("show");
             setFolderAndLinkStatus();
-            Swal.close();
+            if(refresh == false){
+                MIRRORNAME = mirrorName;
+                STORAGEPATH = storagePath;
+                $('#createLinkModal').modal('hide');
+                $('#linksAndPathsComponent').modal("show");
+                $('.overlay').hide();
+                Swal.close();
+            }
+            modalTimeout && clearTimeout(modalTimeout);
+            modalTimeout = setTimeout(function () {
+                if($('#linksAndPathsComponent').hasClass('show') && mirroring  == true){
+                    getLinksAndPaths(row, true);
+                }
+            }, 10000);
         }, function(response){
+            const error = JSON.parse(response).message;
             $('.overlay').hide();
-            let error = JSON.parse(response).message;
             showSwal(error,'error',2000);
         })
     }
 
     function createSymbolicLink(row){
-        var mirrorName = row.querySelector('#name').innerHTML;
-        var storagePath =  row.querySelector('#storagePath').innerHTML;
-        var extUrl = row.querySelector('#extUrl').innerHTML;
-		var	extRepoName = row.querySelector('#extRepoName').innerHTML;
-        var downloadPath = row.querySelector('#downloadPath').innerHTML;
-        var oldLink = row.querySelector('#oldLinkName').innerHTML;
+        let mirrorName = row.querySelector('#name').innerHTML;
+        let storagePath =  row.querySelector('#storagePath').innerHTML;
+        let extUrl = row.querySelector('#extUrl').innerHTML;
+		let	extRepoName = row.querySelector('#extRepoName').innerHTML;
+        let downloadPath = row.querySelector('#downloadPath').innerHTML;
+        let oldLink = row.querySelector('#oldLinkName').innerHTML;
         Swal.fire({
             title: "{{__('Yeni Sembolik Link Oluştur')}}",
             input: 'text',
@@ -311,7 +306,7 @@
                         formData.append("oldLinkName", oldLink);
                     request("{{API('create_mirror_link')}}", formData, function(response) {
                         const message = JSON.parse(response).message;
-                        Swal.fire({title:"{{ __('Oluşturuldu') }}", text: message, type: "success", showConfirmButton: false});
+                        Swal.fire({title:"{{ __('Başarılı') }}", text: message, type: "success", showConfirmButton: false});
                         setTimeout(function() { getLinksAndPaths(row); }, 1000);
                     }, function(response) {
                         const error = JSON.parse(response).message;
@@ -350,7 +345,6 @@
         request(API('get_sources_list') ,formData,function(response){
             const output = JSON.parse(response).message;
             $("#sourcesListModal").find('.list-group').html('');
-            console.log(output);
             output.forEach(function(item){
                 $("#sourcesListModal").find('.list-group').append(`
                     <li class="list-group-item">${item.sourceName}</li>
@@ -365,10 +359,10 @@
     }
     
 
-    function getAddress(row, mirrorName, storagePath){
+    function getAddress(row, mirrorName2, storagePath2){
         showSwal('{{__("Yükleniyor...")}}','info');
-        var mirrorName = (row == null) ? mirrorName : row.querySelector("#name").innerHTML;
-        var storagePath = (row == null) ? storagePath : row.querySelector("#storagePath").innerHTML;
+        let mirrorName = (row == null) ? mirrorName2 : row.querySelector("#name").innerHTML;
+        let storagePath = (row == null) ? storagePath2 : row.querySelector("#storagePath").innerHTML;
         let formData = new FormData();
             formData.append("mirrorName", mirrorName);
             formData.append("storagePath", storagePath);
@@ -437,10 +431,10 @@
     }
 
     function deleteAddress(row){
-        var address = row.querySelector("#address").innerHTML;
+        let address = row.querySelector("#address").innerHTML;
         Swal.fire({
             title: `<h5>${address}</h5>`,
-            text: "{{ __('Silmek istediğinize emin misiniz?') }}",
+            text: "{{ __('Depo adresini silmek istediğinize emin misiniz?') }}",
             type: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085D6',
@@ -478,7 +472,7 @@
         let cronOption = $('#addCronComponent').find('select[name=cronOption]').val()
         let formData = new FormData();
         let cronTime = "";
-        if(cronOption === "arayüz"){
+        if(cronOption === "interface"){
             let cronMinutes = $('#addCronComponent').find('select[name=cronMinutes]').val()
             let cronHours = $('#addCronComponent').find('select[name=cronHours]').val()
             let cronDays = $('#addCronComponent').find('select[name=cronDays]').val()
@@ -515,7 +509,7 @@
 
     $('[name=cronOption]').change(function(){
         let val = $(this).val();
-        if(val === "arayüz"){
+        if(val === "interface"){
             $('#addCronComponent').find('#cronJob').show();
             $('#addCronComponent').find('.text_input').hide();
         }else {
@@ -541,12 +535,12 @@
     }
 
     function removeCron(){
-        showSwal('{{__("Kaldırılıyor...")}}','info');
+        showSwal('{{__("Kaldırılıyor...")}}', 'info');
         let formData = new FormData();
         formData.append('mirrorName', MIRRORNAME);
         request(API("remove_cron"), formData, function(res) {
             getMirrors();
-            showSwal('{{__("Kaldırıldı..")}}','success',2000);
+            showSwal('{{__("Kaldırıldı!")}}', 'success', 2000);
             $('#editCronComponent').modal("hide")
         }, function(response){
             let error = JSON.parse(response);
@@ -575,7 +569,7 @@
             if($(this).text() === '1'){ 
                 $(this).html(`<button class="btn btn-xs btn-danger" onclick='stopMirror(this.parentNode.parentNode)'><i class="fa fa-stop"></i></button>`);
             }else{//no download
-                $(this).html(`<button class="btn btn-xs btn-success" onclick='startMirror(this.parentNode.parentNode)'><i class="fa fa-play"></i></button>`);
+                $(this).html(`<button class="btn btn-xs btn-success" onclick='startMirror(this.parentNode.parentNode);'><i class="fa fa-play"></i></button>`);
             }
         });
     }
@@ -655,5 +649,6 @@
         });
     }
     editMirrorConfig();
+
 
 </script>
