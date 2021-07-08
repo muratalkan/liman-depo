@@ -1,6 +1,6 @@
 # Liman MYS - Depo+ Eklentisi
 
-*Önceden yazılmış olan Depo eklentisinin güncelleştirilmiş versiyonudur.
+Önceden yazılmış olan Depo eklentisinin güncelleştirilmiş versiyonudur.
 
 Daha fazla bilgi için;
 - https://liman.havelsan.com.tr/
