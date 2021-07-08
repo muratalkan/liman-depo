@@ -176,7 +176,7 @@ function diskInformation($path)
 
 function updateCronMirrorName($oldMirrorName, $mirrorName){
 	Command::runSudo(
-		"sed -i 's/@{:oldMirrorName}/@{:mirrorName}/g' @{:cronMirrorFile}",
+		"sed -i \"s/@{:oldMirrorName}/@{:mirrorName}/g\" @{:cronMirrorFile}",
 		[
 			'oldMirrorName' => $oldMirrorName,
 			'mirrorName' => $mirrorName,
@@ -240,6 +240,10 @@ function deleteInactiveSymbolicLink($ext_repo, $link_base){
 				->removeFile();
 		$ext_repo->link_name = "";
 	}
+}
+
+function addQuotes($str){
+	return "'$str'";
 }
 
 function addMirrorAddressToFile($mirrorName, $address, $url){

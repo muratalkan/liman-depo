@@ -366,7 +366,7 @@
         const packagePath = row.querySelector('#linkPath').innerHTML;
         const checkLink = row.querySelector('#checkLink').innerHTML;
         if(checkLink === '1'){
-            window.open(packagePath, '_blank');
+            window.location.assign(packagePath);
         }
     }
 

@@ -99,7 +99,7 @@ class File
     }
     
     public function removeFile(){
-        return $this->runCommand('rm @{:path}', [
+        return $this->runCommand('rm '.addQuotes($this->path), [
 			'path' => $this->path
 		]);
     }
@@ -112,14 +112,16 @@ class File
     }
 
     public function move($newPath){ //also, this can be used to rename
-        return $this->runCommand('mv @{:path} @{:newPath}', [
-			'path' => $this->path,
-            'newPath' => $newPath
-		]);
+        return $this->runCommand('mv '.addQuotes($this->path).' '.addQuotes($newPath));
+    }
+
+    public function size(){
+        return $this->runCommand("du -sh ".addQuotes($this->path)." | awk '{print $1}'");
     }
 
     private function runCommand($command, $attributes = []){
 		return Command::runSudo($command, $attributes);
 	}
+
 
 }
