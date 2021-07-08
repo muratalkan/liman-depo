@@ -54,9 +54,13 @@ class InternalRepoController
 		}
 		return view('table', [
 			'value' => $internalRepoArray,
-			'title' => ['İsim', 'Yol', 'Link', 'Boyut', '*hidden*'],
+			'title' => ['Depo Adı', 'Dizin', 'Adres', 'Boyut', '*hidden*'],
 			'display' => ['name', 'path', 'link', 'size', 'codename:codename'],
 			'menu' => [
+				'Disk Bilgisi' => [
+					'target' => 'getRepoDiskInfo',
+					'icon' => 'fa-hdd'
+				],
 				'Sil' => [
 					'target' => 'deleteInternalRepo',
 					'icon' => 'fa-trash'
@@ -68,6 +72,18 @@ class InternalRepoController
 
 	function getPackages()
 	{
+		$internalRepoArray = [];
+		$listText = str_replace(
+			"\n", '',
+			Command::runSudo('cat {:listJsonFile}', [
+				'listJsonFile' => $this->listJsonFile
+			])
+		);
+		$listArray = json_decode($listText, true);
+		if (is_array($listArray['internal'])) {
+			$internalRepoNames = array_keys($listArray['internal']);
+		}
+
 		$internalRepoPath = request('internalRepoPath');
 		$debArray = [];
 		$packagesFileArray = explode(
@@ -103,16 +119,24 @@ class InternalRepoController
 				array_push($debArray, $str);
 			}
 		}
-		return view('table', [
-			'value' => $debArray,
-			'title' => ['İsim', 'Versiyon', 'Boyut', 'Mimari'],
-			'display' => ['name', 'version', 'size', 'architecture'],
-			'menu' => [
-				'Sil' => [
-					'target' => 'deletePackage',
-					'icon' => 'fa-trash'
+		
+		$localRepo = $listArray['internal'][request('internalRepoName')];
+		$ipaddress = Command::runSudo('hostname -I');
+
+		return respond([
+			'sourceList' => "deb http://$ipaddress/" .
+							str_replace('/var/www/html/', '', $localRepo['link']).' '.$localRepo['codeName'].' '.$localRepo['packages'],
+			'table' => view('table', [
+				'value' => $debArray,
+				'title' => ['Paket Adı', 'Versiyon', 'Boyut', 'Mimari'],
+				'display' => ['name', 'version', 'size', 'architecture'],
+				'menu' => [
+					'Sil' => [
+						'target' => 'deletePackage',
+						'icon' => 'fa-trash'
+					]
 				]
-			]
+			])
 		]);
 	}
 
@@ -134,6 +158,12 @@ class InternalRepoController
 		$repoPath = request('repoPath');
 		$codeName = request('codeName');
 		$remotePath = '/tmp/' . str_replace(' ', '', request('name'));
+
+		if(trim(request('fileSize')) >= $this->getTotalSize($repoPath)){ //byte
+			return respond(trim(request('fileSize')) . ' - '.$this->getTotalSize($repoPath) , 201);
+			return respond(__('Sunucuda yeterli alan yok!'), 201);
+		}
+
 		$output = putFile(getPath($path), $remotePath);
 		if ($output !== 'ok') {
 			return respond('Başarısız', 201);
@@ -305,7 +335,10 @@ class InternalRepoController
 
 		$item = [
 			'link' => $link,
-			'path' => $repoPath
+			'path' => $repoPath,
+			'arch' => $Architectures,
+			'codeName' => $Codename,
+			'packages' => $Components
 		];
 
 		$listArray['internal'][$repoName] = $item;
@@ -430,6 +463,25 @@ Expire-Date: 0
 				'key' => $key
 			]
 		);
-		return respond($link . '/public.gpg', 200);
+		return respond('wget -qO - ' . $link . '/public.gpg | sudo apt-key add -', 200);
 	}
+
+	function getRepoDiskInfo(){
+		$localRepoPath = request('storagePath');
+
+		$data = diskInformation($localRepoPath);
+		$data["InstallSize"] = (!empty(pathSize("$localRepoPath"))) ? pathSize("$localRepoPath") : "null";
+		$data["DirectoryStatus"] =  File::instance()->path("$localRepoPath")->checkDirectoryExists();
+
+		return respond($data, 200);
+	}
+
+
+	private function getTotalSize($path){
+		$size = Command::runSudo("df -B1 @{:path} | tail -1 | awk '{print $4}'", [
+			'path' => $path
+		]);
+		return trim($size);
+	}
+
 }
