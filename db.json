@@ -8,7 +8,7 @@
     "language": "php",
     "status": 0,
     "service": null,
-    "supportedLiman": "1.5.0",
+    "supportedLiman": "1.7.0",
     "support": "administrator@liman.dev",
     "icon": "fas fa-box-open",
     "require_key": "true",
