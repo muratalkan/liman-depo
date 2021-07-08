@@ -167,7 +167,7 @@ class MirrorController
 			foreach ($url->external_repos as $ext_repo) {
 				foreach($ext_repo->versions as $vers){
 					$sourcesListArr[] = [
-						'sourceName' => "$vers->deb_type http://$ipaddress/$ext_repo->link_name/$ext_repo->external_repo_name $vers->code_name $vers->packages",
+						'sourceName' => "$vers->deb_type http://$ipaddress/$ext_repo->link_name $vers->code_name $vers->packages",
 					];
 				}
 			}
@@ -185,7 +185,7 @@ class MirrorController
 		
 		$repos = readRepos();
 		if (checkMirrorNameExists($mirrorName, $repos)) { //must be unique
-			return respond('Böyle bir aynalama zaten var!', 201);
+			return respond(__('Böyle bir aynalama zaten var!'), 201);
 		}
 
 		$item2 = [
@@ -230,16 +230,14 @@ class MirrorController
 			]
 		);
 	
-		return respond('Aynalama eklendi', 200);
+		return respond(__('Aynalama eklendi'), 200);
 	}
 
 	function delete(){
 		$mirrorName = request('name');
 		$path = request('storagePath');
 
-		if(checkMirrorStatus($mirrorName)){
-			return respond("Devam eden bir aynalama bulunmakta. Aynalamayı durdurduktan sonra işlem yapabilirsiniz.", 201);
-		}
+		$this->checkMirroring();
 
 		File::instance()
 			->path(Mirror::getConfigsFolderPath().'/'.$mirrorName)
@@ -287,7 +285,7 @@ class MirrorController
 		}
 		writeRepos($repos);
 
-		return respond("Aynalama silindi", 200);
+		return respond(__("Aynalama silindi"), 200);
 	}
 
 	function edit(){
@@ -304,9 +302,7 @@ class MirrorController
 		$old_set_tilde = request('old_set_tilde');
 		
 
-		if(checkMirrorStatus($oldMirrorName)){
-			return respond("Devam eden bir aynalama bulunmakta. Aynalamayı durdurduktan sonra işlem yapabilirsiniz.", 201);
-		}
+		$this->checkMirroring();
 
 		$repos = readRepos();
 		$mirrorList = RepositoryCollection::instance()
@@ -315,7 +311,7 @@ class MirrorController
 
 		if($mirrorName != $oldMirrorName){
 			if (checkMirrorNameExists($mirrorName, $repos)) { //must be unique
-				return respond('Böyle bir aynalama zaten var!', 201);
+				return respond(__('Böyle bir aynalama zaten var!'), 201);
 			}
 
 			File::instance()
@@ -348,7 +344,7 @@ class MirrorController
 		}
 
 		writeRepos($repos);
-		return respond("Aynalama güncellendi", 200);
+		return respond(__("Aynalama güncellendi"), 200);
 	}
 
 	function move(){
@@ -357,9 +353,7 @@ class MirrorController
 		$newPath = rtrim(trim(request('newPath')), '/');
 
 		if($newPath != $oldPath){
-			if(checkMirrorStatus($mirrorName)){
-				return respond("Devam eden bir aynalama bulunmakta. Aynalamayı durdurduktan sonra işlem yapabilirsiniz.", 201);
-			}
+			$this->checkMirroring();
 
 			File::instance()
 					->path(join(DIRECTORY_SEPARATOR, [$OLDPath, $mirrorName]))
@@ -412,10 +406,10 @@ class MirrorController
 				Since moving large folders take too much time. For now, this function will not move the folder .
 			*/
 			
-			return respond("Deponun konumu güncellendi", 200);
+			return respond(__("Deponun konumu güncellendi"), 200);
 		}
 		
-		return respond("Depo zaten belirtilen konumda!", 201);
+		return respond(__("Depo zaten belirtilen konumda!"), 201);
 	}
 
 	function addAddress(){
@@ -431,11 +425,11 @@ class MirrorController
 
 
 		if(checkMirrorStatus($mirrorName) && $activeState == 'true'){
-			return respond("Devam eden bir aynalama bulunmakta. Aynalamayı durdurduktan sonra işlem yapabilirsiniz.", 201);
+			return respond(__("Devam eden bir aynalama bulunmakta. Aynalamayı durdurduktan sonra işlem yapabilirsiniz."), 201);
 		}
 
 		if(substr($address, 0, 3) !== 'deb'){
-			return respond('Depo adresi \'deb\' ile başlamalıdır!', 201);
+			return respond(__('Depo adresi \'deb\' ile başlamalıdır!'), 201);
 		}
 
 		if($activeState=='false'){
@@ -478,12 +472,12 @@ class MirrorController
 		);
 	
 		if ($checkAddressStatus) {
-			return respond('Bu adrese benzer bir adres bulunmaktadır!', 201);
+			return respond(__('Bu adrese benzer bir adres bulunmaktadır!'), 201);
 		}
 	
 		if($activeState == "true"){
 			if($ext_repo != null && $link != "" && $ext_repo->link_name != ""){ //it means there is already link for that repo e.g debian
-				return respond('Bu depoya ait sembolik link zaten var. Lütfen sembolik link alanını boş bırakınız.', 201);
+				return respond(__('Bu depoya ait sembolik link zaten var. Lütfen sembolik link alanını boş bırakınız.'), 201);
 			}
 			if($ext_repo == null || $ext_repo->link_name == ""){
 				validate([
@@ -493,7 +487,7 @@ class MirrorController
 							->path($mirrorList->link_base.'/'.$link)
 							->checkLinkExists();
 				if ($checkLink) {
-					return respond('Bu sembolik link zaten var!', 201);
+					return respond(__('Bu sembolik link zaten var!'), 201);
 				}else{
 					if($ext_repo != null && $ext_repo->link_name == ""){
 						$ext_repo->link_name = $link;
@@ -538,7 +532,7 @@ class MirrorController
 		writeRepos($repos);
 
 		addMirrorAddressToFile($mirrorName, $address, $ext_repo_urlPath);
-		return respond("Adres eklendi", 200);
+		return respond(__("Adres eklendi"), 200);
 	}
 
 	function deleteAddress(){
@@ -550,7 +544,7 @@ class MirrorController
 
 
 		if(checkMirrorStatus($mirrorName) && $activeState == 'true'){
-			return respond("Devam eden bir aynalama bulunmakta. Aynalamayı durdurduktan sonra işlem yapabilirsiniz.", 201);
+			return respond(__("Devam eden bir aynalama bulunmakta. Aynalamayı durdurduktan sonra işlem yapabilirsiniz."), 201);
 		}
 
 		$parsedAddress = parseAddress($address);
@@ -640,7 +634,7 @@ class MirrorController
 
 		deleteInactiveSymbolicLink($ext_repo, $mirrorList->link_base);
 		writeRepos($repos);
-		return respond("Adres silindi", 200);
+		return respond(__("Adres silindi"), 200);
 	}
 
 	function editAddress(){
@@ -654,12 +648,10 @@ class MirrorController
 		$oldLink = request('oldLink');
 
 
-		if(checkMirrorStatus($mirrorName)){
-			return respond("Devam eden bir aynalama bulunmakta. Aynalamayı durdurduktan sonra işlem yapabilirsiniz.", 201);
-		}
+		$this->checkMirroring();
 
 		if(substr($address, 0, 3) !== 'deb'){
-			return respond('Depo adresi \'deb\' ile başlamalıdır', 201);
+			return respond(__('Depo adresi \'deb\' ile başlamalıdır'), 201);
 		}
 
 		if($activeState == "true"){
@@ -680,7 +672,7 @@ class MirrorController
 			$packages = $parsedAddress['packages']; //main contrib non-free testing
 
 		if (filter_var($external_repo_url, FILTER_VALIDATE_URL) === FALSE) {
-			return respond("Depo URL'si geçerli değil!", 201);
+			return respond(__("Depo URL'si geçerli değil!"), 201);
 		}
 
 		$repos = readRepos();
@@ -698,7 +690,7 @@ class MirrorController
 		}
 
 		if($ext_repo == null){
-			return respond("Depo URL'si ve depo adı düzenlenemez! Yeni bir depo eklemek için 'Adres Ekle' butonunu kullanabilirsiniz.", 201);
+			return respond(__("Depo URL'si ve depo adı düzenlenemez! Yeni bir depo eklemek için 'Adres Ekle' butonunu kullanabilirsiniz."), 201);
 		}
 
 		if($activeState == 'true'){
@@ -708,7 +700,7 @@ class MirrorController
 							->path($mirrorList->link_base.'/'.$link)
 							->checkLinkExists();
 				if ($checkLink) {
-					return respond('Bu sembolik link zaten var!', 201);
+					return respond(__('Bu sembolik link zaten var!'), 201);
 				} 
 				//rename symbolic link name
 				$ext_repo->link_name = $link;
@@ -757,7 +749,7 @@ class MirrorController
 		deleteInactiveSymbolicLink($ext_repo, $mirrorList->link_base);
 
 		writeRepos($repos);
-		return respond("Adres düzenlendi", 200);
+		return respond(__("Adres düzenlendi"), 200);
 	}
 
 	function createLink(){
@@ -784,7 +776,7 @@ class MirrorController
 						->checkLinkExists();
 
 		if($checkLinkExists){
-			return respond('Bu sembolik link zaten var', 201);
+			return respond(__('Bu sembolik link zaten var'), 201);
 		}else{
 			File::instance()
 					->path($downloadPath)
@@ -795,7 +787,7 @@ class MirrorController
 			$ext_repo->link_name = request('linkName');
 
 			writeRepos($repos);
-			return respond("Yeni sembolik link oluşturuldu", 200);
+			return respond(__("Yeni sembolik link oluşturuldu"), 200);
 		}
 	}
 
@@ -820,9 +812,9 @@ class MirrorController
 			
 			writeToAptMirrorLog('Start', 'apt-mirror '. $mirrorName . ' repository');
 
-			return respond('Aynalama işlemi başlatıldı', 200);
+			return respond(__('Aynalama işlemi başlatıldı'), 200);
 		} else {
-			return respond('Mevcut aynalama işlemi zaten var!', 201);
+			return respond(__('Mevcut aynalama işlemi zaten var!'), 201);
 		}
 
 	}
@@ -858,9 +850,9 @@ class MirrorController
 			]
 		);
 		if (!$checkAptMirror) {
-			return respond("Aynalama durduruldu", 200);
+			return respond(__("Aynalama durduruldu"), 200);
 		} else {
-			return respond("Aynalama durdurulamadı!", 201);
+			return respond(__("Aynalama durdurulamadı!"), 201);
 		}
 	}
 
@@ -869,9 +861,9 @@ class MirrorController
 		$path = request('storagePath');
 
 		$data = diskInformation($path);
-		$data["InstalledMirrorSize"] = (!empty(pathSize("$path/$mirrorName"))) ? pathSize("$path/$mirrorName") : "null";
+		$data["InstallSize"] = (!empty(pathSize("$path/$mirrorName"))) ? pathSize("$path/$mirrorName") : "null";
 		//$data["RemainingMirrorDownloadSize"] = preg_match('#[0-9]#', mirrorSize($mirrorName)) ? mirrorSize($mirrorName) : "NA";
-		$data["MirrorStatus"] =  File::instance()->path("$path/$mirrorName")->checkDirectoryExists();
+		$data["DirectoryStatus"] =  File::instance()->path("$path/$mirrorName")->checkDirectoryExists();
 
 		return respond($data, 200);
 	}
@@ -886,9 +878,7 @@ class MirrorController
 		]);
 		$mirrorName = request('mirrorName');
 
-		if(checkMirrorStatus($mirrorName)){
-			return respond("Devam eden bir aynalama bulunmakta. Aynalamayı durdurduktan sonra işlem yapabilirsiniz.", 201);
-		}
+		$this->checkMirroring();
 
 		$scriptPath = Mirror::getSizeScriptPath() . Mirror::getSizeScriptName();
 
@@ -931,6 +921,12 @@ class MirrorController
 			]),
 			200
 		);
+	}
+
+	private function checkMirroring(){
+		if(checkMirrorStatus(request('mirrorName'))){
+			abort(__("Devam eden bir aynalama bulunmakta. Aynalamayı durdurduktan sonra işlem yapabilirsiniz."), 201);
+		}
 	}
 
 }

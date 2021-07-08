@@ -42,7 +42,7 @@ class PackageSearchController
 		return respond($mirrorList);
 	}
 
-	function getMirrorResult(){
+	function getMirrorSearchResult(){
 		$storagePath = request('storagePath');
 		$mirrorName = request('select_repoList');
 		$currentPage = request('currentPage');
@@ -173,7 +173,7 @@ class PackageSearchController
 		return respond($internalRepoArray);
 	}
 
-	function getInternalRepoResult(){
+	function getInternalRepoSearchResult(){
 		$internalRepoName = request('internalRepoName');
 		$packageName = request('packagename');
 		$currentPage = request('currentPage');

@@ -1,12 +1,12 @@
 <div class="row">
     <div class="col-md-3">
-        <button type="button" class="btn btn-block btn-primary log_date_pre">{{__("Önceki")}}</button>
+        <button type="button" class="btn btn-block btn-dark log_date_pre">{{__("Önceki")}}</button>
     </div>
     <div class="col-md-6">
         <button type="button" class="btn btn-default btn-block log_date_text">{{__("Tarih Seç")}}</button>
     </div>
     <div class="col-md-3">
-        <button type="button" class="btn btn-block btn-primary log_date_next">{{__("Sonraki")}}</button>
+        <button type="button" class="btn btn-block btn-dark log_date_next">{{__("Sonraki")}}</button>
     </div>
 </div>
 <br>

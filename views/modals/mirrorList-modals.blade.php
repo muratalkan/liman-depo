@@ -36,13 +36,10 @@
     "id" => "linksAndPathsComponent",
     "title" => "Sembolik Linkler ve Dosya Yolları"
 ])
-    <button type="button" class="btn btn btn-primary mb-2" data-toggle="modal" onclick="getLinksAndPaths()">
-        <i class="fas fa-sync mr-1"></i> Yenile
-    </button>
-    <button type="button" class="btn btn btn-primary mb-2" data-toggle="modal" onclick="getSizeMirror()">
+    <button type="button" class="btn btn btn-primary mb-2" onclick="getSizeMirror()">
         <i class="fas fa-calculator mr-1"></i> Boyut Hesapla
     </button>
-    <button type="button" class="btn btn btn-primary mb-2" data-toggle="modal" onclick="getSourcesList()">
+    <button type="button" class="btn btn btn-primary mb-2" onclick="getSourcesList()">
         <i class="fas fa-list-ul mr-1"></i> Sources List
     </button>
 
@@ -62,7 +59,7 @@
     "title" => "Sources List"
 ])
     <div class="alert alert-info" role="alert">
-        {{__("Depoları sisteminize eklemek için aşağıdaki satırları 'sources.list.d' dosyasına eklemelisiniz.")}}
+        {{__("Depoları sunucuya eklemek için aşağıdaki satırları 'sources.list.d' dosyasına eklemelisiniz.")}}
     </div>
     <div style="max-height: 600px; overflow-y: auto;">
         <ul class="list-group">
@@ -147,7 +144,7 @@
     @include('inputs',[
         "inputs" => [
             "Ekleme Seçeneği:cronOption" => [
-                "Arayüz"=>"arayüz",
+                "Arayüz"=>"interface",
                 "Özel"=>"custom"
             ],
         ],
@@ -248,3 +245,5 @@
     "id" => "taskModal",
     "title" => "Görev İşleniyor",
 ])@endcomponent
+
+@include('components.functions')

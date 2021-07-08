@@ -2,7 +2,7 @@
 	@include('table', [
 			'value' => $mirrorArray,
 			'title' => [
-				'İsim', 'Tanım', 'Görev', 'Son Çalıştırma', 'Durum', 'İşlem', "*hidden*", "*hidden*", "*hidden*", "*hidden*", "*hidden*", "*hidden*", "*hidden*", "*hidden*"
+				'Aynalama Adı', 'Tanım', 'Görev', 'Son Çalıştırma', 'Durum', 'İşlem', "*hidden*", "*hidden*", "*hidden*", "*hidden*", "*hidden*", "*hidden*", "*hidden*", "*hidden*"
 			],
 			'display' => [
 				'name', 'description', 'cron', 'lastRun', 'status', 'operation', 'storagePath:storagePath', 'oldName:oldName', 'oldDescription:oldDescription', 'oldStoragePath:oldStoragePath', 'set_nthreads:set_nthreads', 'set_tilde:set_tilde', 'old_set_nthreads:old_set_nthreads', 'old_set_tilde:old_set_tilde'

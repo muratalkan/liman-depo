@@ -10,7 +10,7 @@ use App\Classes\Package;
 
 class InstallPackage extends Task
 {
-	protected $description = 'Paket Kuruluyor...';
+	protected $description = 'Paketler Yükleniyor...';
 	protected $sudoRequired = true;
 
 	public function __construct(array $attrbs = [])
@@ -26,6 +26,7 @@ class InstallPackage extends Task
 		)
 			->centos(
 				'
+				yum install '.$packages.' -y
 				'
 			)
 			->get();
