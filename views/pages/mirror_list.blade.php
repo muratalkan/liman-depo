@@ -565,6 +565,8 @@
     
     function setMirrorButtons(){
         const table = $('#mirrorTable');
+        table.find('th').eq(5).addClass("text-center"); table.find('th').eq(6).addClass("text-center");
+        table.find("td[id='status']").addClass("text-center"); table.find("td[id='operation']").addClass("text-center");
         table.find("td[id='operation']").each(function(){
             if($(this).text() === '1'){ 
                 $(this).html(`<button class="btn btn-xs btn-danger" onclick='stopMirror(this.parentNode.parentNode)'><i class="fa fa-stop"></i></button>`);

@@ -29,11 +29,23 @@
         showSwal('{{__("Yükleniyor...")}}','info');
         request(API('get_internal_repo'), new FormData(), function (res) {
             $('#internalRepoTable').html(res).find('table').DataTable(dataTablePresets('normal'));
+            manipulateLocalRepoTable();
             $('#internalRepoAddModal').modal('hide');
             Swal.close();
         }, function(res){
             let error = JSON.parse(res);
             showSwal(error.message,'error',2000);
+        });
+    }
+
+    
+    function manipulateLocalRepoTable(){
+        const table = $('#internalRepoTable');
+        table.find("td[id='link']").each(function(){
+            $(this).html(`<span style="color:blue;">${$(this).text()}</span>`);
+        });
+        table.find("td[id='size']").each(function(){
+            $(this).html(`<span class="badge badge-secondary"></i>${$(this).text()}</span>`);
         });
     }
 
