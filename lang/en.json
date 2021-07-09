@@ -1,9 +1,8 @@
 {
 	"Yükleniyor...": "Loading...",
-
-    "Güncelleniyor...": "Updating...",
-    "Yerel Depo Ekle": "Add Local Repository",
-    "Dosyalar": "Files",
+	"Güncelleniyor...": "Updating...",
+	"Yerel Depo Ekle": "Add Local Repository",
+	"Dosyalar": "Files",
 	"Depo Adı": "Repository Name",
 	"Dizin": "Path",
 	"Adres": "Address",
@@ -15,7 +14,7 @@
 	"Onay": "Confirmation",
 	"Onayla": "OK",
 	"Yerel depoyu silmek istediğinize emin misiniz?": "Are you sure you want to delete the local repository?",
-    "Evet": "Yes",
+	"Evet": "Yes",
 	"İptal": "Cancel",
 	"Silindi": "Deleted",
 	"GPG Anahtarı": "GPG Key",
