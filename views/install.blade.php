@@ -1,5 +1,5 @@
 <div class="alert alert-warning" role="alert">
-  {{__("Eklentiyi kullanabilmek için 'apt-mirror', 'reprepro' ve 'apache2' paketlerini sunucuya yüklemeniz gerekmektedir. Aşağıdaki yer alan 'Paketleri Yükle' butonunu kullanarak kurulumu gerçekleştirebilirsiniz")}}.
+  {{__("Eklentiyi kullanabilmek için 'apt-mirror', 'reprepro' ve 'apache2' paketlerini sunucuya yüklemeniz gerekmektedir. Aşağıda yer alan 'Paketleri Yükle' butonunu kullanarak yükleyebilirsiniz.")}}.
 </div>
 
 <button id="installButton" class="btn btn-secondary" onclick="startInstallation()">{{__("Paketleri Yükle")}}</button>
