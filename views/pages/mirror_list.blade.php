@@ -285,7 +285,7 @@
             title: "{{__('Yeni Sembolik Link Oluştur')}}",
             input: 'text',
             text : `${downloadPath}`,
-            inputPlaceholder: "{{__('Yeni sembolik link adını giriniz')}} (e.g. pardus)",
+            inputPlaceholder: "{{__('Yeni sembolik link adını giriniz')}} (e.g. debian)",
             showCancelButton: true,
             confirmButtonText: "{{__('Oluştur')}}", cancelButtonText: "{{__('İptal')}}",
             inputValidator: (value) => {

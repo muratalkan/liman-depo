@@ -97,8 +97,8 @@
                 "Aktif" => "true",
                 "İnaktif" => "false"
             ],
-            "Depo Adresi" => "address:text:deb http://depo.pardus.org.tr/pardus ondokuz main",
-            "Sembolik Link Adı" => "link:text:pardus",
+            "Depo Adresi" => "address:text:deb http://ftp.debian.org/debian buster main contrib non-free",
+            "Sembolik Link Adı" => "link:text:debian",
         ]
     ])
 @endcomponent
