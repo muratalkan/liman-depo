@@ -42,7 +42,8 @@
             showSwal('{{__("Yükleniyor...")}}','info');
         }
         request(API('get_mirrors'), new FormData(), function (response) {
-            $('#mirrorTable').html(response).find('table').DataTable(dataTablePresets('normal'));
+            const output = JSON.parse(response).message;
+            $('#mirrorTable').html(output.table).find('table').DataTable(dataTablePresets('normal'));
             if(refresh == false){
                 $('#addMirror').modal('hide');
                 $('#editMirror').modal('hide');
@@ -51,7 +52,7 @@
             setMirrorStatus();
             mirrorTimeout && clearTimeout(mirrorTimeout);
             mirrorTimeout = setTimeout(function () {
-                if($(`a[href=\"#mirrorList\"]`).hasClass("active")){
+                if($(`a[href=\"#mirrorList\"]`).hasClass("active") && output.array.length != 0){
                     getMirrors('', true);
                 }
             }, 30000);
@@ -284,7 +285,7 @@
         Swal.fire({
             title: "{{__('Yeni Sembolik Link Oluştur')}}",
             input: 'text',
-            text : `${downloadPath}`,
+            html : `<span class="badge badge-danger">${oldLink}</span>`,
             inputPlaceholder: "{{__('Yeni sembolik link adını giriniz')}} (e.g. debian)",
             showCancelButton: true,
             confirmButtonText: "{{__('Oluştur')}}", cancelButtonText: "{{__('İptal')}}",

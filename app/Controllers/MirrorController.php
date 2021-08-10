@@ -69,8 +69,11 @@ class MirrorController
 
 		}
 
-		return view('components.mirror_list-table', [
-			'mirrorArray' => $mirrorArray
+		return respond([
+			'array' => $mirrorArray,
+			'table' => view('components.mirror_list-table', [
+				'mirrorArray' => $mirrorArray
+			])
 		]);
 	}
 
@@ -446,7 +449,7 @@ class MirrorController
 			$packages = $parsedAddress['packages']; //main contrib non-free testing
 
 		if (filter_var($external_repo_url, FILTER_VALIDATE_URL) === FALSE) {
-			return respond("Depo URL'si geçerli değil!", 201);
+			return respond("Depo adresi geçerli değil!", 201);
 		}
 
 		$repos = readRepos();
@@ -792,16 +795,15 @@ class MirrorController
 	}
 
 	function start(){
-		global $limanData;
 		$mirrorName = request('mirrorName');
 
 		if (!checkMirrorStatus($mirrorName)) {
 			Command::runSudo(
-				'bash -c "sg nogroup -c \"umask 002;apt-mirror @{:path}; echo $(date \"+%d-%m-%Y %H:%M:%S\") \| local user = $(whoami), liman user = {:limanUser} - Finish - apt-mirror @{:mirrorName} repository >> @{:summaryLogFile}\" > @{:detailsLogFile} & disown"',
+				'bash -c "sg nogroup -c \"umask 002;apt-mirror @{:path}; echo $(date \"+%d-%-m-%Y %H:%M:%S\") \| local user = $(whoami), liman user = {:limanUser} - Finish - apt-mirror @{:mirrorName} repository >> @{:summaryLogFile}\" > @{:detailsLogFile} & disown"',
 				[
 					'path' => join(DIRECTORY_SEPARATOR, [Mirror::getConfigsFolderPath(), $mirrorName]),
 					'mirrorName' => $mirrorName,
-					'limanUser' => $limanData['user']['name'],
+					'limanUser' => getLimanUser(),
 					'summaryLogFile' => Mirror::getSummaryLogFile(),
 					'detailsLogFile' => Mirror::getDetailsLogFile()
 				]
@@ -820,7 +822,6 @@ class MirrorController
 	}
 
 	function stop(){
-		global $limanData;
 		$mirrorName = request('mirrorName');
 
 		$checkCron = (bool) Command::runSudo(
