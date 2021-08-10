@@ -79,6 +79,11 @@ function checkMirrorStatus($mirrorName){
 	);
 }
 
+function getLimanUser(){
+	global $limanData;
+	return $limanData['user']['name'];
+}
+
 function getIpAddress(){
 	return Command::runSudo('hostname -I');;
 }
@@ -117,10 +122,11 @@ function parseAddress($addr){
 }
 
 function writeToAptMirrorLog($type, $description){
+	
 	 Command::runSudo(
-		"sh -c \"echo $(date '+%d-%m-%Y %H:%M:%S') \| local user = $(whoami), liman user = {:limanUser} - {:type} - {:description} | tee -a @{:summaryLogFile}\"",
+		"sh -c \"echo $(date '+%d-%-m-%Y %H:%M:%S') \| local user = $(whoami), liman user = {:limanUser} - {:type} - {:description} | tee -a @{:summaryLogFile}\"",
 		[
-			'limanUser' => $limanData['user']['name'],
+			'limanUser' => getLimanUser(),
 			'type' => $type,
 			'description' => $description,
 			'summaryLogFile' => Mirror::getSummaryLogFile()
