@@ -1,36 +1,24 @@
-<div class="detail_div" style="background-color:black;">
-    <code class="detail_log" style="color:lime;">
-        <div class="overlay">
-            <div class="spinner-border" role="status">
-                <span class="sr-only">{{__('Loading')}}...</span>
-            </div>
-        </div>
-    </code>
+<div class="info-box shadow-sm log-box border">
+    <div class="overlay"> <i class="fas fa-3x fa-sync-alt fa-spin"></i> </div>
+    <div class="info-box-content p-0" style="background:black; height:500px; overflow-y:scroll;">
+        <pre id="detail_log" style="color:lime; white-space:pre-wrap; word-wrap:break-word;">
+        </pre>
+    </div>
 </div>
 
-<script>
-    function getLastMirrorLog(){
-        $('.modal').modal('hide');
-        showSwal('{{__("Yükleniyor...")}}','info',2000);
-        let form = new FormData();
-        request(API('get_last_mirror_log'), form, function (res) {
-            text = JSON.parse(res).message;
-            text = text.reverse()
-            html = ""
-            if(text.length <= 1)[
-                html = "{{__('Sonuç yok!')}}"
-            ]
-            else{
-                for(i = 0; i < text.length; i++){
-                    html += text[i]+"<br>"
-                }
-            }
 
-            $('.detail_log').html(html);
-            Swal.close();
-        }, function(res){
-            let error = JSON.parse(res);
-            showSwal(error.message,'error',2000);
+<script>
+    
+    function getLastMirrorLog(){
+        $('.log-box').find('.overlay').show();
+        request(API('get_last_mirror_log'), new FormData(), function (response) {
+            const output = JSON.parse(response).message;
+            $('#detail_log').html(output).parent().scrollTop(999999999999);
+            $('.log-box').find('.overlay').hide();
+        }, function(response){
+            const error = JSON.parse(response).message;
+            showSwal(error,'error',2000);
         })
     }
+
 </script>

@@ -8,14 +8,13 @@ use App\Classes\Mirror;
 
 class LastMirrorLogController
 {
-	function get()
-	{
-		$detailLog = explode(
-			"\n",
-			Command::runSudo('cat @{:detailsLogFile}', [
-				'detailsLogFile' => Mirror::getDetailsLogFile()
-			])
-		);
-		return respond($detailLog, 200);
+	function get(){
+		$detailsLog = Command::runSudo('tac @{:detailsLogFile}', [
+						'detailsLogFile' => Mirror::getDetailsLogFile()
+					]);
+		if(empty($detailsLog)){
+			$detailsLog = __('Kayıt bulunamadı!');
+		}
+		return respond($detailsLog);
 	}
 }
