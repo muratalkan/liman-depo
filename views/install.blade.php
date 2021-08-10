@@ -1,12 +1,12 @@
-<div class="alert alert-warning" role="alert">
-  {{__("Eklentiyi kullanabilmek için 'apt-mirror', 'reprepro' ve 'apache2' paketlerini sunucuya yüklemeniz gerekmektedir. Aşağıda yer alan 'Paketleri Yükle' butonunu kullanarak yükleyebilirsiniz.")}}.
+<div class="alert alert-info" role="alert">
+  <i class="fas fa-info-circle mr-2"></i>{{__("Eklentiyi kullanabilmek için 'apt-mirror', 'apache2' ve 'reprepro' paketlerini sunucuya yüklemeniz gerekmektedir. Aşağıda yer alan 'Paketleri Yükle' butonunu kullanarak yükleyebilirsiniz.")}}
 </div>
 
 <button id="installButton" class="btn btn-secondary" onclick="startInstallation()">{{__("Paketleri Yükle")}}</button>
 
 @component('modal-component',[
     "id" => "taskModal",
-    "title" => "Görev İşleniyor",
+    "title" => "Package Installer",
 ])@endcomponent
 
 <script>

@@ -10,7 +10,7 @@ use App\Classes\Package;
 
 class InstallPackage extends Task
 {
-	protected $description = 'Paketler Yükleniyor...';
+	protected $description = 'Installing packages...';
 	protected $sudoRequired = true;
 
 	public function __construct(array $attrbs = [])
