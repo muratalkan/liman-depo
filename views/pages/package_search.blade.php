@@ -303,7 +303,7 @@
 
     function setSelectbox(attrName, data){
         $('select[name='+attrName+']').select2({
-                theme: 'bootstrap4', placeholder: "{{__('Seçim Yapınız')}}", data : [{id: '', text: ''}].concat(data)
+                theme: 'bootstrap4', placeholder: "{{__('Birini seç')}}", data : [{id: '', text: ''}].concat(data)
         });
         setTimeout(function(){ hideLoadingEffect(attrName); }, 500);
     }
