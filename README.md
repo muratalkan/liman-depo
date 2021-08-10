@@ -1,4 +1,4 @@
-# Liman MYS - Depo Eklentisi
+# Liman MYS | Depo Eklentisi
 
 ## Özellikler
 - Bu eklentinin aynalama sekmesi bölümünde uzaktaki depoları yerel sunucunuza çekebilir ve yerel sunucunuzdaki depoları kullanarak her türlü depo işlemlerini uzaktaki sunucuya bağlı kalmadan gerçekleştirebilirsiniz.
