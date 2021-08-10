@@ -11,7 +11,6 @@ if (!$checkPackage) {
             "title" => __('Aynalama'),
             "icon" => "fas fa-cloud-download-alt mr-2",
             "view" => "mirror_list",
-            "onclick" => "getMirrors()",
             "notReload" => true,
             "subTabs" => [
                 "mirrorList" => [
