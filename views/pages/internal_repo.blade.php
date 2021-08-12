@@ -53,7 +53,7 @@
         showSwal('{{__("Yükleniyor...")}}','info');
         let internalRepoPath = line.querySelector("#path").innerHTML;
         let internalRepoName = line.querySelector("#name").innerHTML;
-        let internalRepoLink = line.querySelector("#link").innerHTML;
+        let internalRepoLink = $(line).find('#link').text();
         let internalRepoCodeName = line.querySelector("#codename").innerHTML;
         let formData = new FormData();
             formData.append("internalRepoPath",internalRepoPath)

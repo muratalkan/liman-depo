@@ -17,7 +17,7 @@ class InstallPackage extends Task
 	{
 		$packages = implode(' ', Package::getPackageToInstall());
 
-		$this->control = Distro::debian('apt|dpkg')
+		$this->control = Distro::debian('apt\|dpkg')
 			->centos('yum install')
 			->get();
 
